@@ -18,6 +18,32 @@ export class StderrLogger extends WritableTemplate {
     }
 }
 
+// string stream
+export class StringStream extends ReadableTemplate {
+    constructor(s: string) {
+        super(() => {
+            const str = new Readable({read: () => {}});
+            str.push(s);
+            str.push(null);
+            return str;
+        });
+    }
+}
+
+// string receiver/concatenator
+export class StringReceiver extends Writable {
+    private _s: string;
+    constructor() {
+        super();
+        this._s = "";
+    }
+    _write(chunk: any, encoding: string, callback: (error?: Error | null) => void) {
+        this._s += chunk.toString();
+        callback();
+    }
+    get text() {return this._s;}
+}
+
 // spawn child process
 export class CGIIO extends IOTemplate {
     constructor(spawnArgsSource: () => {command: string, args?: string[], cwd?: string, env?: any}) {

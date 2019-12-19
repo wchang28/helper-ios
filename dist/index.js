@@ -36,6 +36,40 @@ var StderrLogger = /** @class */ (function (_super) {
     return StderrLogger;
 }(io_stream_templates_1.WritableTemplate));
 exports.StderrLogger = StderrLogger;
+// string stream
+var StringStream = /** @class */ (function (_super) {
+    __extends(StringStream, _super);
+    function StringStream(s) {
+        return _super.call(this, function () {
+            var str = new stream_1.Readable({ read: function () { } });
+            str.push(s);
+            str.push(null);
+            return str;
+        }) || this;
+    }
+    return StringStream;
+}(io_stream_templates_1.ReadableTemplate));
+exports.StringStream = StringStream;
+// string receiver/concatenator
+var StringReceiver = /** @class */ (function (_super) {
+    __extends(StringReceiver, _super);
+    function StringReceiver() {
+        var _this = _super.call(this) || this;
+        _this._s = "";
+        return _this;
+    }
+    StringReceiver.prototype._write = function (chunk, encoding, callback) {
+        this._s += chunk.toString();
+        callback();
+    };
+    Object.defineProperty(StringReceiver.prototype, "text", {
+        get: function () { return this._s; },
+        enumerable: true,
+        configurable: true
+    });
+    return StringReceiver;
+}(stream_1.Writable));
+exports.StringReceiver = StringReceiver;
 // spawn child process
 var CGIIO = /** @class */ (function (_super) {
     __extends(CGIIO, _super);
