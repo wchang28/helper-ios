@@ -1,0 +1,23 @@
+{
+  "name": "helper-ios",
+  "version": "1.0.0",
+  "description": "Serveral Useful IO Streams",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wchang28/cgi-io.git"
+  },
+  "author": "Wen Chang",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "@types/node": "^12.12.18",
+    "io-stream-templates": "git+https://github.com/wchang28/io-stream-templates.git"
+  }
+}
