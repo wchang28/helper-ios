@@ -1,6 +1,6 @@
 {
   "name": "helper-ios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Serveral Useful IO Streams",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

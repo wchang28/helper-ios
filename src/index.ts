@@ -51,8 +51,9 @@ export class CGIIO extends IOTemplate {
             const {command, args, cwd, env} = spawnArgsSource();
             const cp = spawn(command, args, {cwd, env, windowsHide: true});
             const ps = new PassThrough();
+            let stderr: string = "";
             cp.stderr.on("data", (chunk: any) => {
-                ps.write(chunk);
+                stderr += chunk;    // accumulate the stderr with the chunk 
             });
             cp.stdout.on("data", (chunk: any) => {
                 ps.write(chunk);
@@ -61,7 +62,11 @@ export class CGIIO extends IOTemplate {
                 ps.emit("error", err);
             }).on("close", (code: number, signal) => {
                 ps.emit("child-process-close", code, signal);
-                ps.end();
+                if (stderr) {
+                    ps.emit("error", {code, stderr});
+                } else {
+                    ps.end();
+                }
             });
             return {writable: cp.stdin as Writable, readable: ps as Readable};            
         });
@@ -111,8 +116,8 @@ export class RequestGet extends ReadableTemplate {
             req.on("response", (response) => {
                 response.pipe(ptResponse);
             }).on("error", (err) => {
-				ptResponse.emit("error", err);
-			});
+                ptResponse.emit("error", err);
+            });
             req.end();
             return ptResponse;
         });

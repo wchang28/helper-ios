@@ -78,8 +78,9 @@ var CGIIO = /** @class */ (function (_super) {
             var _a = spawnArgsSource(), command = _a.command, args = _a.args, cwd = _a.cwd, env = _a.env;
             var cp = child_process_1.spawn(command, args, { cwd: cwd, env: env, windowsHide: true });
             var ps = new stream_1.PassThrough();
+            var stderr = "";
             cp.stderr.on("data", function (chunk) {
-                ps.write(chunk);
+                stderr += chunk; // accumulate the stderr with the chunk 
             });
             cp.stdout.on("data", function (chunk) {
                 ps.write(chunk);
@@ -88,7 +89,12 @@ var CGIIO = /** @class */ (function (_super) {
                 ps.emit("error", err);
             }).on("close", function (code, signal) {
                 ps.emit("child-process-close", code, signal);
-                ps.end();
+                if (stderr) {
+                    ps.emit("error", { code: code, stderr: stderr });
+                }
+                else {
+                    ps.end();
+                }
             });
             return { writable: cp.stdin, readable: ps };
         }) || this;
